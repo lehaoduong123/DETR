@@ -220,8 +220,9 @@ class MetricLogger(object):
                 'data: {data}'
             ])
         MB = 1024.0 * 1024.0
-        for obj in iterable:
-            data_time.update(time.time() - end)
+        try:
+            for obj in iterable:
+                data_time.update(time.time() - end)
             yield obj
             iter_time.update(time.time() - end)
             if i % print_freq == 0 or i == len(iterable) - 1:
@@ -240,6 +241,9 @@ class MetricLogger(object):
                         time=str(iter_time), data=str(data_time)))
             i += 1
             end = time.time()
+        except FileNotFoundError:
+            pass
+        
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
         print('{} Total time: {} ({:.4f} s / it)'.format(
